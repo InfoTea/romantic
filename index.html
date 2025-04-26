@@ -22,7 +22,7 @@
       overflow: hidden;
     }
 
-    h1, p, #photo {
+    h1, p, #confirmText, #yesButton, #photo {
       opacity: 0;
       transform: translateY(30px);
       animation: fadeInUp 2s ease forwards;
@@ -38,13 +38,32 @@
       font-size: 1.5em;
     }
 
+    #confirmText {
+      margin-top: 20px;
+      font-size: 2em;
+      animation-delay: 0s;
+      display: none;
+    }
+
+    #yesButton {
+      margin-top: 20px;
+      padding: 10px 20px;
+      background: rgba(255,255,255,0.8);
+      color: black;
+      font-size: 1.2em;
+      border: none;
+      border-radius: 10px;
+      cursor: pointer;
+      animation-delay: 0s;
+      display: none;
+    }
+
     #photo {
       margin-top: 30px;
       max-width: 70%;
       border-radius: 20px;
       box-shadow: 0 0 20px rgba(255,255,255,0.7);
       animation: breathing 5s ease-in-out infinite, fadeInUp 2s ease forwards;
-      animation-delay: 3.5s;
       display: none;
     }
 
@@ -63,8 +82,12 @@
 </head>
 <body>
 
-  <h1>Dear Jacky...</h1>
-  <p>Will you join me tonight for a special evening?</p>
+  <h1 id="invitationTitle">Dear Jacky...</h1>
+  <p id="invitationText">Will you join me tonight for a special evening?</p>
+
+  <div id="confirmText">Are you sure?</div>
+  <button id="yesButton">Yes</button>
+
   <img id="photo" src="./we.jpg" alt="Our photo">
 
   <audio id="backgroundMusic" src="./love.mp3" loop></audio>
@@ -72,12 +95,16 @@
   <script>
     const music = document.getElementById('backgroundMusic');
     const photo = document.getElementById('photo');
+    const invitationTitle = document.getElementById('invitationTitle');
+    const invitationText = document.getElementById('invitationText');
+    const confirmText = document.getElementById('confirmText');
+    const yesButton = document.getElementById('yesButton');
 
     function startMagic() {
-      document.querySelector('h1').style.animationDelay = '0s';
-      document.querySelector('p').style.animationDelay = '1s';
+      yesButton.style.display = 'none';
+      confirmText.style.display = 'none';
       photo.style.display = 'block';
-      music.play().catch(e => console.error('Music play blocked:', e));
+      music.play();
     }
 
     if ('webkitSpeechRecognition' in window || 'SpeechRecognition' in window) {
@@ -90,7 +117,13 @@
         const command = event.results[event.results.length-1][0].transcript.trim().toLowerCase();
         console.log('Heard:', command);
         if (command.includes('i agree')) {
-          startMagic();
+          invitationTitle.style.display = 'none';
+          invitationText.style.display = 'none';
+          confirmText.style.display = 'block';
+          confirmText.style.opacity = '1';
+          yesButton.style.display = 'block';
+          yesButton.style.opacity = '1';
+          yesButton.addEventListener('click', startMagic);
         }
       };
 
