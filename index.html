@@ -59,19 +59,27 @@
       display: none;
     }
 
-    #photo {
+    #photo-container {
       position: absolute;
       top: 50%;
       left: 50%;
       transform: translate(-50%, -50%);
       width: auto;
       height: 70vh;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      z-index: 1;
+    }
+    
+    #photo {
+      max-height: 100%;
+      max-width: 90%;
       border-radius: 20px;
       box-shadow: 0 0 30px rgba(255,255,255,0.6);
       animation: breathing 5s ease-in-out infinite;
       display: none;
-      z-index: 1; /* под фразами */
-      opacity: 0.65; /* почти полностью видна */
+      opacity: 0.65;
     }
 
 
@@ -115,7 +123,9 @@
   <div id="confirmText">Are you sure?</div>
   <button id="yesButton">Yes</button>
 
-  <img id="photo" src="./we.jpg" alt="Our photo">
+  <div id="photo-container">
+    <img id="photo" src="./we.jpg" alt="Our photo">
+  </div>
 
   <audio id="backgroundMusic" src="./love.mp3" loop></audio>
 
