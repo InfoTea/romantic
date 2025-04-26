@@ -8,102 +8,101 @@
     body {
       margin: 0;
       padding: 0;
-      background-color: black;
+      background: url('https://images.unsplash.com/photo-1506744038136-46273834b3fb?fit=crop&w=1950&q=80') no-repeat center center fixed;
+      background-size: cover;
       height: 100vh;
       width: 100vw;
       display: flex;
+      flex-direction: column;
       justify-content: center;
       align-items: center;
-      flex-direction: column;
       font-family: 'Georgia', serif;
       color: white;
+      text-shadow: 0 0 10px black;
       overflow: hidden;
     }
 
-    #invitation, #photoSlideshow {
-      text-align: center;
+    h1, p, #photo {
+      opacity: 0;
+      transform: translateY(30px);
+      animation: fadeInUp 2s ease forwards;
     }
 
-    #photoSlideshow {
+    h1 {
+      animation-delay: 0.5s;
+      font-size: 2.5em;
+    }
+
+    p {
+      animation-delay: 2s;
+      font-size: 1.5em;
+    }
+
+    #photo {
+      margin-top: 30px;
+      max-width: 70%;
+      border-radius: 20px;
+      box-shadow: 0 0 20px rgba(255,255,255,0.7);
+      animation: breathing 5s ease-in-out infinite, fadeInUp 2s ease forwards;
+      animation-delay: 3.5s;
       display: none;
     }
 
-    img {
-      max-width: 90%;
-      max-height: 80vh;
-      border-radius: 20px;
-      box-shadow: 0 0 20px rgba(255,255,255,0.5);
+    @keyframes fadeInUp {
+      to {
+        opacity: 1;
+        transform: translateY(0);
+      }
     }
 
-    h1, p {
-      margin: 10px;
+    @keyframes breathing {
+      0%, 100% { transform: scale(1) translateY(0); }
+      50% { transform: scale(1.03) translateY(-5px); }
     }
   </style>
 </head>
 <body>
 
-<div id="invitation">
   <h1>Dear Jacky...</h1>
   <p>Will you join me tonight for a special evening?</p>
-</div>
+  <img id="photo" src="./we.jpg" alt="Our photo">
 
-<div id="photoSlideshow">
-  <img id="slideshowImage" src="./we.jpg" alt="Our memories">
-</div>
+  <audio id="backgroundMusic" src="./love.mp3" loop></audio>
 
-<audio id="backgroundMusic" src="./love.mp3" loop></audio>
+  <script>
+    const music = document.getElementById('backgroundMusic');
+    const photo = document.getElementById('photo');
 
-<script>
-  const music = document.getElementById('backgroundMusic');
-  const invitation = document.getElementById('invitation');
-  const photoSlideshow = document.getElementById('photoSlideshow');
-  const slideshowImage = document.getElementById('slideshowImage');
+    function startMagic() {
+      document.querySelector('h1').style.animationDelay = '0s';
+      document.querySelector('p').style.animationDelay = '1s';
+      photo.style.display = 'block';
+      music.play().catch(e => console.error('Music play blocked:', e));
+    }
 
-  // Здесь список всех твоих фоток
-  const images = [
-    './we.jpg',
-    './we2.jpg',
-    './we3.jpg',
-    './we4.jpg'
-    // можно добавить сколько хочешь
-  ];
+    if ('webkitSpeechRecognition' in window || 'SpeechRecognition' in window) {
+      const SpeechRecognition = window.SpeechRecognition || window.webkitSpeechRecognition;
+      const recognition = new SpeechRecognition();
+      recognition.continuous = true;
+      recognition.lang = 'en-US';
 
-  let currentImage = 0;
+      recognition.onresult = (event) => {
+        const command = event.results[event.results.length-1][0].transcript.trim().toLowerCase();
+        console.log('Heard:', command);
+        if (command.includes('i agree')) {
+          startMagic();
+        }
+      };
 
-  function startSlideshow() {
-    invitation.style.display = 'none';
-    photoSlideshow.style.display = 'block';
-    music.play();
+      recognition.onerror = (event) => {
+        console.error('Speech recognition error:', event.error);
+      };
 
-    setInterval(() => {
-      currentImage = (currentImage + 1) % images.length;
-      slideshowImage.src = images[currentImage];
-    }, 3000); // меняем фотку каждые 3 секунды
-  }
-
-  if ('webkitSpeechRecognition' in window || 'SpeechRecognition' in window) {
-    const SpeechRecognition = window.SpeechRecognition || window.webkitSpeechRecognition;
-    const recognition = new SpeechRecognition();
-    recognition.continuous = true;
-    recognition.lang = 'en-US';
-
-    recognition.onresult = (event) => {
-      const command = event.results[event.results.length-1][0].transcript.trim().toLowerCase();
-      console.log('Heard:', command);
-      if (command.includes('i agree')) {
-        startSlideshow();
-      }
-    };
-
-    recognition.onerror = (event) => {
-      console.error('Speech recognition error:', event.error);
-    };
-
-    recognition.start();
-  } else {
-    console.error('Speech recognition is not supported in this browser.');
-  }
-</script>
+      recognition.start();
+    } else {
+      console.error('Speech recognition is not supported in this browser.');
+    }
+  </script>
 
 </body>
 </html>
